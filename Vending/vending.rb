@@ -5,7 +5,6 @@ COINS = {"penny" => 1, "nickle" => 5, "dime" => 10, "quarter" => 25, "half" => 5
 
 
 class User
-
   attr_accessor :wallet
 
   def initialize(name, wallet=1000)
@@ -13,60 +12,55 @@ class User
     @wallet = wallet
   end
 
-  def select_item(item)
-  end
-
-  def cancel_requests
-  end
-
   def pay(due)
     @wallet -= due
   end
-
 end
-
-class Transaction
-
-  attr_accessor :complete
-  attr_reader :store
-
-  def initialize
-    @store = Hash.new(0)
-    @complete = false
-  end
-
-  def cancel
-    @store = Hash.new(0)
-  end
-
-  def total
-    total = 0
-    @store.each { |item, num| total += (ITEMS[item][:price] * num) }
-    total
-  end
-
-  def add_to_cart(item)
-    if is_available?(item)
-      @store[item] += 1
-    else
-      puts "No more of that item"
-    end
-  end
-
-  def print
-    puts "You got #{@store} in your cart"
-  end
-
-  private
-
-  def is_available?(item)
-    ITEMS[item][:stock] > @store[item]
-  end
-
-end
-
 
 class VendingMachine
+
+#-----------------------------------------------------------------------------#
+#--------------------------Transaction----------------------------------------#
+#-----------------------------------------------------------------------------#
+  class Transaction
+    attr_accessor :complete
+    attr_reader :store
+
+    def initialize
+      @store = Hash.new(0)
+      @complete = false
+    end
+
+    def cancel
+      @store = Hash.new(0)
+    end
+
+    def total
+      total = 0
+      @store.each { |item, num| total += (ITEMS[item][:price] * num) }
+      total
+    end
+
+    def add_to_cart(item)
+      if is_available?(item)
+        @store[item] += 1
+      else
+        puts "No more of that item"
+      end
+    end
+
+    def print
+      puts "You got #{@store} in your cart"
+    end
+
+
+    def is_available?(item)
+      ITEMS[item][:stock] > @store[item]
+    end
+  end
+#-----------------------------------------------------------------------------#
+#----------------------End Transaction----------------------------------------#
+#-----------------------------------------------------------------------------#
 
   def initialize(user, items=ITEMS, cash=1000)
     @items = items
