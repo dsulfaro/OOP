@@ -46,6 +46,7 @@ class VendingMachine
         @store[item] += 1
       else
         puts "No more of that item"
+        sleep(1)
       end
     end
 
@@ -75,11 +76,9 @@ class VendingMachine
 
   def run
     until @order.complete
-      system "clear"
-      puts "You have #{@user.wallet - @order.total} in change"
-      @order.print
+      print_status
       prompt
-      receive_choice
+      handle_choice
     end
     farewell
   end
@@ -89,7 +88,7 @@ class VendingMachine
   def accept_coin
   end
 
-  def receive_choice
+  def handle_choice
     choice = gets.chomp.downcase.to_sym
     puts ""
     case choice
@@ -104,6 +103,7 @@ class VendingMachine
         @order.add_to_cart(choice)
       else
         puts "Invalid Request, please try again."
+        sleep(1)
       end
     end
   end
@@ -132,6 +132,12 @@ class VendingMachine
     puts "You have #{@user.wallet} left"
     puts "Goodbye"
     puts ""
+  end
+
+  def print_status
+    system "clear"
+    puts "You have #{@user.wallet - @order.total} in change"
+    @order.print
   end
 
 end
