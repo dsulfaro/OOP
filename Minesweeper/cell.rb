@@ -1,11 +1,11 @@
 class Cell
 
   attr_accessor :content
-  attr_reader :revealed?
+  attr_reader :revealed
 
-  def initialize(content = " ")
+  def initialize(content = "[]")
     @content = content
-    @revealed? = false
+    @revealed = false
   end
 
   def reveal
