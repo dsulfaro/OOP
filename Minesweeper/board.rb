@@ -5,11 +5,11 @@ class Board
   attr_reader :board, :size, :hidden_mines
   attr_accessor :revealed_mines
 
-  def initialize(size=8)
+  def initialize(size = 8)
     @board = []
     @size = size
     set_board!
-    @hidden_mines = @size
+    @hidden_mines = size
   end
 
   def [](*pos)
@@ -26,7 +26,17 @@ class Board
       puts "That square is already revealed!"
       sleep(0.8)
     else
-      branch_out(x, y)
+      return branch_out(x, y)
+    end
+  end
+
+  def safe(pos)
+    i = pos[0]
+    j = pos[1]
+    if @board[i][j].content == "M "
+      @board[i][j].set_tile!("S ")
+      @hidden_mines -= 1
+      @board[i][j].reveal
     end
   end
 
@@ -48,20 +58,18 @@ class Board
     end
   end
 
-  # def show
-  #   @board.each do |arr|
-  #     arr.each do |cell|
-  #       if cell.content.nil?
-  #         print "[]"
-  #       else
-  #         print cell.content
-  #       end
-  #     end
-  #     puts ""
-  #   end
-  # end
-
   private
+
+  def lose!
+    system "clear"
+    puts "Wow, you suck!!! You lost hahahaha!"
+    @board.each do |arr|
+      arr.each do |cell|
+        cell.reveal if cell.has_mine?
+      end
+    end
+    render
+  end
 
   def add_neighbors(x, y)
     result = []
@@ -86,10 +94,16 @@ class Board
 
   def branch_out(x, y)
     @board[x][y].reveal
-    return if @board[x][y].has_number?
-    add_neighbors(x, y).each do |n|
-      next if @board[n[0]][n[1]].has_mine?
-      branch_out(n[0], n[1]) if @board[n[0]][n[1]].empty? || @board[n[0]][n[1]].has_number?
+    if @board[x][y].has_mine?
+      lose!
+      return false
+    else
+      return if @board[x][y].has_number?
+      add_neighbors(x, y).each do |n|
+        next if @board[n[0]][n[1]].has_mine?
+        branch_out(n[0], n[1]) if @board[n[0]][n[1]].empty? || @board[n[0]][n[1]].has_number?
+      end
+      return true
     end
   end
 
